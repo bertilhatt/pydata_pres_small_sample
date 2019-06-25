@@ -13283,13 +13283,13 @@ a.anchor-link {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Contents">Contents<a class="anchor-link" href="#Contents">&#182;</a></h2><p><a name="contents_1"></a></p>
 <p><a href="#principles">I. How to run a test</a><br>
-<a href="#random_generation">-. <em>Generating random samples</em></a><br>
-<a href="#code">II. Processing results</a><br>
+<a href="#random_generation">-. <em>Generate random samples</em></a><br>
+<a href="#code">II. Process results</a><br>
 <a href="#aa_test">III. AA-tests</a><br>
 <a href="#sensitivity">IV. Sensitivity testing</a><br>
-<a href="#source_data">V. Processing the source dataset</a><br>
+<a href="#source_data">V. Process the source dataset</a><br>
 <a href="#unit_selection">VI. Complications</a><br>
-<a href="#overlap">VII. Overlaping experiments</a><br>
+<a href="#overlap">VII. Overlapping experiments</a><br>
 <a href="#summary"><em>Summary</em></a></p>
 
 </div>
@@ -13333,7 +13333,17 @@ a.anchor-link {
 
 </div>
 </div>
-</div></div></section></section><section><section>
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Running,-open-code-and-some-equations">Running, open code and some equations<a class="anchor-link" href="#Running,-open-code-and-some-equations">&#182;</a></h3><p>This presentation and the notebook it is based on is freely available on-line. It contains some equations (for the $t$-test) and a lot of Python code — enough to run full AB-test analysis.</p>
+<p>All the code that you need will appear on the screen. The code runs on Python 3.x and basic PyData libraries (<code>pandas</code>, <code>numpy</code>, <code>copy</code>, <code>math</code>, <code>scipy.stats</code>, <code>matplotlib.pyplot</code>, <code>datetime</code>).</p>
+<p>The code in most cells should take less time to run than for us to make the presentation. There’s a handful of exception with a Warning comment so we encourage you to follow along, execute cells as we go, modify and <strong>ask questions about things you can change</strong>.</p>
+
+</div>
+</div>
+</div></section></section><section><section>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13362,9 +13372,9 @@ a.anchor-link {
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Statistical-test-&#8211;-Simplified">Statistical test &#8211; Simplified<a class="anchor-link" href="#Statistical-test-&#8211;-Simplified">&#182;</a></h3><p>We estimate the Conversion rate for control and treatment in their respective sample.</p>
-$$ \hat{CR_C} = \frac{\#conv_C}{\#obs_C} \quad \hat{CR_T} = \frac{\#conv_T}{\#obs_T}$$<p></p>
+$$ \hat{{CR}_C} = \frac{\#conv_C}{\#obs_C} \quad \hat{{CR}_T} = \frac{\#conv_T}{\#obs_T}$$<p></p>
 <p>the variance of the conversion rate for control is:
-$$ \hat V \left(\hat{CR_C}\right) = \frac{\hat{CR_C}(1-\hat{CR_C})}{\#obs_C} $$</p>
+$$ \hat V \left({CR}_C\right) = \frac{\hat{{CR}_C}(1-\hat{{CR}_C})}{\#obs_C} $$</p>
 
 </div>
 </div>
@@ -13372,12 +13382,13 @@ $$ \hat V \left(\hat{CR_C}\right) = \frac{\hat{CR_C}(1-\hat{CR_C})}{\#obs_C} $$<
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The variance for the difference is :
-$$ \hat V \left(d_{C-T}\right) =
-   \hat V \left(\hat{CR_C} - \hat{CR_T}\right) =
-\frac{\hat{CR_C}(1-\hat{CR_C})}{\#obs_C} + \frac{\hat{CR_T}(1-\hat{CR_T})}{\#obs_T} $$</p>
-<p>while the standard deviation of the difference is:
-$$ \hat\sigma\left(\hat{d_{C-T}}\right) =
+<p>We consider the estimates on Control and Treatment to be independent, therefore<br>
+the theoretical variance for their difference is :
+$$ V \left(d_{C-T}\right) =
+   V \left(CR_T - CR_C\right) =
+\frac{{CR}_C(1-{CR}_C)}{\#obs_C} + \frac{{CR}_T(1-{CR}_T)}{\#obs_T} $$</p>
+<p>and the estimated standard deviation is:
+$$ \hat\sigma\left(d_{C-T}\right) =
 \sqrt{\frac{\hat{CR_C}(1-\hat{CR_C})}{\#obs_C} +
       \frac{\hat{CR_T}(1-\hat{CR_T})}{\#obs_T}} $$</p>
 
@@ -13387,27 +13398,16 @@ $$ \hat\sigma\left(\hat{d_{C-T}}\right) =
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Statistical-test-&#8211;-Simplified-(Continued)">Statistical test &#8211; Simplified (Continued)<a class="anchor-link" href="#Statistical-test-&#8211;-Simplified-(Continued)">&#182;</a></h3><p>We consider the difference to be <strong>significant</strong> by proving wrong the no-difference hypothesis:</p>
+<h3 id="Statistical-test-&#8211;-Simplified-(Continued)">Statistical test &#8211; Simplified (Continued)<a class="anchor-link" href="#Statistical-test-&#8211;-Simplified-(Continued)">&#182;</a></h3><p>We consider the difference to be <strong>significant</strong> by proving unlikely the hypothesis of No difference, specifically:</p>
 <ul>
 <li>if we assume Control and Treatment are the same,</li>
-<li><p>would the difference only happen in the 5% most eggregious cases?</p>
+<li><p>would the difference only happen in the most eggregious cases, say 5%?</p>
 <p><em>i.e.</em> Is the difference in conversion rate <strong>outside of the confidence interval</strong> for Control?</p>
 </li>
 </ul>
-<p>For $\alpha = 5\%$, that means $ z_{1-\alpha/2} = 1.96 $ standard deviations on either side of the estimate.</p>
-$$ \hat{d_{C-T}} \in \left[ 0 \pm z.\hat\sigma\left(\hat{d_{C-T}}\right)\right] $$
-</div>
-</div>
-</div></section><section>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>We can also express the test with a $t$-score and a $p$-value:</p>
-<ul>
-<li>the $t$-score is the number of standard deviation observed, <em>i.e.</em> $$ \hat{t} = \frac{\hat{d_{C-T}}}{\sigma\left(\hat{d_{C-T}}\right)} $$</li>
-<li>the $p$-value is the probability that our data would be at least this inconsistent given our hypothesis. It’s typically computed using known $t$-test distributions dependent of the degrees of freedom of the test, <em>i.e.</em> the sample.</li>
-</ul>
-
+<p>For $\alpha = \: 5\%$, that means $ z_{1-\alpha/2} = 1.96 $ standard deviations on either side of the estimate.<br>
+For $\alpha = 10\%$, that means $z_{1-\alpha/2} = 1.65$.</p>
+$$ \hat{d}_{C-T} \in \left[ 0 \pm z.\hat\sigma\left(d_{C-T}\right)\right] $$
 </div>
 </div>
 </div></section><section>
@@ -13445,6 +13445,18 @@ MDE \quad \approx &amp; \quad z \sqrt{2 \frac{p(1-p)}{\#obs_C}} \\
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Test-statistics">Test statistics<a class="anchor-link" href="#Test-statistics">&#182;</a></h3><p>We can also express the test with a $t$-score and a $p$-value:</p>
+<ul>
+<li>the $t$-score is the number of standard deviation observed, <em>i.e.</em> $$ t = \frac{\hat{d_{C-T}}}{\hat{\sigma}\left(d_{C-T}\right)} $$</li>
+<li>the $p$-value is the probability that our data would be at least this inconsistent given our hypothesis. It’s typically computed using known $t$-test distributions dependent of the degrees of freedom of the test, <em>i.e.</em> the sample.</li>
+</ul>
+
+</div>
+</div>
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Caveat">Caveat<a class="anchor-link" href="#Caveat">&#182;</a></h3><p>We are assuming that:</p>
 <ol>
 <li>we observe at most one conversion per observation;<ul>
@@ -13470,8 +13482,9 @@ for a Bernoulli sample to be assumed Gaussian;<ul>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Generating-random-samples"><em>Generating random samples</em><a class="anchor-link" href="#Generating-random-samples">&#182;</a></h1><p><a name="random_generation"></a></p>
-<p>We need to create fake data for the purpose of this presentation</p>
+<h1 id="Generate-random-samples"><em>Generate random samples</em><a class="anchor-link" href="#Generate-random-samples">&#182;</a></h1><p><a name="random_generation"></a></p>
+<p>We need to create fake data for the purpose of this presentation.</p>
+<p><em>Feel free to skip if you use your own dataset.</em></p>
 
 </div>
 </div>
@@ -14947,13 +14960,13 @@ This is not consistent with our rate set at 10.0%.
 <h1 id="Interlude"><em>Interlude</em><a class="anchor-link" href="#Interlude">&#182;</a></h1><p>Is everything clear so far?</p>
 <p><a name="interlude_1"></a></p>
 <p><a href="#principles">I. How to run a test</a><br>
-<a href="#random_generation">-. <em>Generating random samples</em></a><br>
-<a href="#code">II. Processing results</a><br>
+<a href="#random_generation">-. <em>Generate random samples</em></a><br>
+<a href="#code">II. Process results</a><br>
 <a href="#aa_test">III. AA-tests</a><br>
 <strong><a href="#sensitivity">IV. Sensitivity testing</a><br>
-<a href="#source_data">V. Processing the source dataset</a><br>
+<a href="#source_data">V. Process the source dataset</a><br>
 <a href="#unit_selection">VI. Complications</a><br>
-<a href="#overlap">VII. Overlaping experiments</a><br>
+<a href="#overlap">VII. Overlapping experiments</a><br>
 <a href="#summary"><em>Summary</em></a></strong></p>
 
 </div>
@@ -16598,13 +16611,13 @@ each of them <code>segment</code> them in <code>control</code> and <code>treatme
 <h1 id="Interlude"><em>Interlude</em><a class="anchor-link" href="#Interlude">&#182;</a></h1><p>Is everything still clear?</p>
 <p><a name="interlude_2"></a></p>
 <p><a href="#principles">I. How to run a test</a><br>
-<a href="#random_generation">-. <em>Generating random samples</em></a><br>
-<a href="#code">II. Processing results</a><br>
+<a href="#random_generation">-. <em>Generate random samples</em></a><br>
+<a href="#code">II. Process results</a><br>
 <a href="#aa_test">III. AA-tests</a><br>
 <a href="#sensitivity">IV. Sensitivity testing</a><br>
-<a href="#source_data">V. Processing the source dataset</a><br>
+<a href="#source_data">V. Process the source dataset</a><br>
 <strong><a href="#unit_selection">VI. Complications</a><br>
-<a href="#overlap">VII. Overlaping experiments</a><br>
+<a href="#overlap">VII. Overlapping experiments</a><br>
 <a href="#summary"><em>Summary</em></a></strong></p>
 
 </div>
@@ -16715,7 +16728,7 @@ each of them <code>segment</code> them in <code>control</code> and <code>treatme
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="VII.-Overlaping-experiments">VII. Overlaping experiments<a class="anchor-link" href="#VII.-Overlaping-experiments">&#182;</a></h1><p><a name="overlap"></a></p>
+<h1 id="VII.-Overlapping-experiments">VII. Overlapping experiments<a class="anchor-link" href="#VII.-Overlapping-experiments">&#182;</a></h1><p><a name="overlap"></a></p>
 
 </div>
 </div>
@@ -16760,13 +16773,13 @@ Four way test? Detect significant difference between (A * A') and A-A'</p>
 <li><strong>control</strong> for activity, type.</li>
 </ul>
 <p><a href="#principles">I. How to run a test</a><br>
-<a href="#random_generation">-. <em>Generating random samples</em></a><br>
-<a href="#code">II. Processing results</a><br>
+<a href="#random_generation">-. <em>Generate random samples</em></a><br>
+<a href="#code">II. Process results</a><br>
 <a href="#aa_test">III. AA-tests</a><br>
 <a href="#sensitivity">IV. Sensitivity testing</a><br>
-<a href="#source_data">V. Processing the source dataset</a><br>
+<a href="#source_data">V. Process the source dataset</a><br>
 <a href="#unit_selection">VI. Complications</a><br>
-<a href="#overlap">VII. Overlaping experiments</a><br>
+<a href="#overlap">VII. Overlapping experiments</a><br>
 <a href="#summary"><em>Summary</em></a></p>
 
 </div>
