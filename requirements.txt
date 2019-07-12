@@ -1,7 +1,5 @@
 pandas
 numpy
-copy
-math
 scipy
 matplotlib
 datetime
