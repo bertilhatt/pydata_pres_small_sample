@@ -18,3 +18,8 @@ A video recording of this presentation should be make available by [the organise
 Contributions are welcome. Re-use of the code is encouraged. Usual disclaimers apply.
 
 The [slides](https://github.com/bertilhatt/pydata_pres_small_sample/blob/master/AB-testing%20by%20clusters%20-%20PyData%20London%202019%20Tutorial%20-%20Bertil%20Hatt%20%26%20Jo%C3%A3o%20Martins.slides.html) are generated using  the [`jupyter nbconvert`](https://nbconvert.readthedocs.io/) tool.
+
+### Requirements
+
+`pip install -r requirements.txt`
+
